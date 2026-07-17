@@ -1,4 +1,6 @@
-## EKS prvision using terraform with K8s netwroking and load ablancer setup.
+## EKS provision using terraform with K8s netwroking and load ablancer setup.
+
+<img width="2720" height="2640" alt="eks_vpc_networking_2az (Copy)" src="https://github.com/user-attachments/assets/800b9ed6-4f26-4f1c-bbf3-f5cc40de4160" />
 
 
 **Here's the plain-English breakdown of each piece in that setup:**
