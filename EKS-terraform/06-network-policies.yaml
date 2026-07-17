@@ -1,0 +1,95 @@
+# Default deny-all as the baseline, then explicit allow rules per tier.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: three-tier-app
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# Node frontend: accept traffic only from the ALB/ingress-controller,
+# and only allowed to call out to the Go API (plus DNS).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: node-frontend-policy
+  namespace: three-tier-app
+spec:
+  podSelector:
+    matchLabels:
+      app: node-frontend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector: {}     # ALB targets pods directly via the VPC CNI;
+          podSelector: {}           # tighten this to your ingress-controller namespace/labels if used
+      ports:
+        - port: 3000
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: go-api
+      ports:
+        - port: 8080
+    - to: []                        # allow DNS resolution
+      ports:
+        - port: 53
+          protocol: UDP
+---
+# Go API: accept traffic only from node-frontend, only allowed to call out to Postgres.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: go-api-policy
+  namespace: three-tier-app
+spec:
+  podSelector:
+    matchLabels:
+      app: go-api
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: node-frontend
+      ports:
+        - port: 8080
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgres        # remove this block entirely if using RDS -
+      ports:                       # RDS egress is controlled by the AWS security group instead,
+        - port: 5432                # since RDS isn't a pod NetworkPolicy can select.
+    - to: []
+      ports:
+        - port: 53
+          protocol: UDP
+---
+# Postgres (only relevant if self-hosted in-cluster): accept only from go-api, no egress needed.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-policy
+  namespace: three-tier-app
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: go-api
+      ports:
+        - port: 5432
