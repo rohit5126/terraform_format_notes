@@ -1,33 +1,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: go-api
-  namespace: three-tier-app
+  name: backend-deployment
+  namespace: devboard-app
   labels:
-    app: go-api
+    apps: backend
     tier: app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: go-api
+      apps: backend
   template:
     metadata:
       labels:
-        app: go-api
+        apps: backend
         tier: app
     spec:
       serviceAccountName: go-api-sa
       containers:
-        - name: go-api
-          image: <ECR_REPO>/go-api:latest
+        - name: backend
+          image: rohit5126/devboard-backend:latest
           ports:
             - containerPort: 8080
-          envFrom:
-            - configMapRef:
-                name: app-config
-            - secretRef:
-                name: postgres-secret
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-sec
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-sec
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: pg-sec
+                  key: POSTGRES_DB
+            - name: PORT
+              value: '8080'
+            - name: POSTGRES_URL
+              value: "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)?sslmode=disable"
           resources:
             requests:
               cpu: 100m
@@ -35,18 +50,12 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /health
               port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 20
+            initialDelaySeconds: 15
+            periodSeconds: 10
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -55,14 +64,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: go-api
-  namespace: three-tier-app
+  name: backend
+  namespace: devboard-app
   labels:
-    app: go-api
+    apps: backend
 spec:
   type: ClusterIP        # internal only - never LoadBalancer or NodePort
   selector:
-    app: go-api
+    apps: backend
   ports:
     - port: 8080
       targetPort: 8080
@@ -70,13 +79,13 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: go-api-hpa
-  namespace: three-tier-app
+  name: backend-hpa
+  namespace: devboard-app
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: go-api
+    name: backend-deployment
   minReplicas: 2
   maxReplicas: 6
   metrics:

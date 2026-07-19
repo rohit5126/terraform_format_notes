@@ -24,7 +24,7 @@ variable "pvt-cidr-2" {
 }
 
 variable "cluster-name" {
-    default = "terraweek"
+    default = "devboard"
 }
 
 variable "cluster-version" {
@@ -33,7 +33,7 @@ variable "cluster-version" {
 
 variable "tags" {
     default = {
-        Name = "terra-week"
+        Name = "devboard"
         Environment = "Dev"
     }
 }

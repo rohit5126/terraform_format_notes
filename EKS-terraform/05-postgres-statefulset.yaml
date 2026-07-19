@@ -5,11 +5,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres
-  namespace: three-tier-app
+  namespace: devboard-app
 spec:
   clusterIP: None          # headless - StatefulSet pods get stable DNS names
   selector:
-    app: postgres
+    apps: postgres
   ports:
     - port: 5432
       targetPort: 5432
@@ -18,30 +18,49 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres
-  namespace: three-tier-app
+  labels:
+    apps: postgres
+  namespace: devboard-app
 spec:
-  serviceName: postgres
+  serviceName: "postgres"
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      apps: postgres
   template:
     metadata:
       labels:
-        app: postgres
+        apps: postgres
         tier: data
     spec:
       containers:
         - name: postgres
-          image: postgres:16
+          image: postgres:16-alpine
           ports:
             - containerPort: 5432
-          envFrom:
-            - secretRef:
-                name: postgres-secret
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-sec
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-sec
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: pg-sec
+                  key: POSTGRES_DB
           volumeMounts:
+            - name: init 
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true 
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+              subPath: postgres-data
           resources:
             requests:
               cpu: 250m
@@ -51,9 +70,14 @@ spec:
               memory: 1Gi
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
-            initialDelaySeconds: 10
+              command: ["sh","-c", "pg_isready -U $(POSTGRES_USER) -d $(POSTGRES_DB)"]
+            initialDelaySeconds: 60
             periodSeconds: 10
+      volumes:
+        - name: init
+          configMap:
+            name: pg-config
+
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage
@@ -62,4 +86,4 @@ spec:
         storageClassName: gp3
         resources:
           requests:
-            storage: 20Gi
+            storage: 10Gi

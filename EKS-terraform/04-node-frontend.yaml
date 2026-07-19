@@ -1,31 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: node-frontend
-  namespace: three-tier-app
+  name: frontend-deployment
+  namespace: devboard-app
   labels:
-    app: node-frontend
+    apps: frontend
     tier: web
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: node-frontend
+      apps: frontend
   template:
     metadata:
       labels:
-        app: node-frontend
+        apps: frontend
         tier: web
     spec:
       serviceAccountName: node-frontend-sa
       containers:
-        - name: node-frontend
-          image: <ECR_REPO>/node-frontend:latest
+        - name: frontend-devboard
+          image: rohit5126/devboard-frontend:latest
           ports:
-            - containerPort: 3000
-          envFrom:
-            - configMapRef:
-                name: app-config
+            - containerPort: 4173
           resources:
             requests:
               cpu: 100m
@@ -33,18 +30,6 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 20
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
@@ -52,28 +37,28 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: node-frontend
-  namespace: three-tier-app
+  name: frontend-service
+  namespace: devboard-app
   labels:
-    app: node-frontend
+    apps: frontend
 spec:
   type: ClusterIP        # the ALB targets this via the Ingress below, not a LoadBalancer Service
   selector:
-    app: node-frontend
+    apps: frontend
   ports:
     - port: 80
-      targetPort: 3000
+      targetPort: 4173
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: node-frontend-hpa
-  namespace: three-tier-app
+  name: frontend-hpa
+  namespace: devboard-app
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: node-frontend
+    name: frontend-deployment
   minReplicas: 2
   maxReplicas: 6
   metrics:

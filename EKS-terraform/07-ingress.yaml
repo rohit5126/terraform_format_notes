@@ -2,13 +2,13 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: app-ingress
-  namespace: three-tier-app
+  namespace: devboard-app
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing        # ALB gets ENIs in the public subnets
     alb.ingress.kubernetes.io/target-type: ip                # route straight to pod IPs, not node ports
     alb.ingress.kubernetes.io/backend-protocol: HTTP
-    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+    alb.ingress.kubernetes.io/healthcheck-path: /health
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     # Subnets are auto-discovered from the kubernetes.io/role/elb tags set in Terraform.
     # Add alb.ingress.kubernetes.io/certificate-arn and a 443 listener once you have an ACM cert.
@@ -20,7 +20,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: node-frontend
+                name: frontend
                 port:
                   number: 80
                   

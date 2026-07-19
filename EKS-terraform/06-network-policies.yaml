@@ -3,7 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
-  namespace: three-tier-app
+  namespace: devboard-app
 spec:
   podSelector: {}
   policyTypes:
@@ -16,11 +16,11 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: node-frontend-policy
-  namespace: three-tier-app
+  namespace: devboard-app
 spec:
   podSelector:
     matchLabels:
-      app: node-frontend
+      apps: frontend
   policyTypes:
     - Ingress
     - Egress
@@ -29,12 +29,12 @@ spec:
         - namespaceSelector: {}     # ALB targets pods directly via the VPC CNI;
           podSelector: {}           # tighten this to your ingress-controller namespace/labels if used
       ports:
-        - port: 3000
+        - port: 4173
   egress:
     - to:
         - podSelector:
             matchLabels:
-              app: go-api
+              apps: backend
       ports:
         - port: 8080
     - to: []                        # allow DNS resolution
@@ -47,11 +47,11 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: go-api-policy
-  namespace: three-tier-app
+  namespace: devboard-app
 spec:
   podSelector:
     matchLabels:
-      app: go-api
+      apps: backend
   policyTypes:
     - Ingress
     - Egress
@@ -59,14 +59,14 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: node-frontend
+              apps: frontend
       ports:
         - port: 8080
   egress:
     - to:
         - podSelector:
             matchLabels:
-              app: postgres        # remove this block entirely if using RDS -
+              apps: postgres        # remove this block entirely if using RDS -
       ports:                       # RDS egress is controlled by the AWS security group instead,
         - port: 5432                # since RDS isn't a pod NetworkPolicy can select.
     - to: []
@@ -79,17 +79,17 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: postgres-policy
-  namespace: three-tier-app
+  namespace: devboard-app
 spec:
   podSelector:
     matchLabels:
-      app: postgres
+      apps: postgres
   policyTypes:
     - Ingress
   ingress:
     - from:
         - podSelector:
             matchLabels:
-              app: go-api
+              apps: backend
       ports:
         - port: 5432
