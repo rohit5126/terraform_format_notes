@@ -45,11 +45,11 @@ EKS-terraform-K8s/
 ├── namespace.yml
 ├── 01-secrets-and-config.yaml # Postgres credentials + init-script ConfigMap
 ├── 02-serviceaccounts.yaml    # frontend + backend ServiceAccounts (backend has IRSA annotation)
-├── 03-go-api.yaml             # backend Deployment, Service, HPA
-├── 04-node-frontend.yaml      # frontend Deployment, Service, HPA
-├── 05-postgres-statefulset.yaml
-├── 06-network-policies.yaml   # default-deny baseline + explicit allow rules
-├── 07-ingress.yaml            # ALB Ingress routing to frontend-service
+├── 03-postgres-statefulset.yaml
+├── 04-backend.yaml             # backend Deployment, Service, HPA
+├── 05-frontend.yaml      # frontend Deployment, Service, HPA
+├── 06-ingress.yaml            # ALB Ingress routing to frontend-service
+├── 07-network-policies.yaml   # default-deny baseline + explicit allow rules
 ├── 01_schema.sql
 └── 02_seed.sql
 ```
