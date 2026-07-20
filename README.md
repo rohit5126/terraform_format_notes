@@ -30,30 +30,8 @@ DevBoard is a task-tracking app (Go API + React/Vite frontend + Postgres) deploy
 
 ## Repository layout
 
-```
-EKS-Cluster/
-├── terraform.tf              # required_providers block
-├── providers.tf              # AWS provider, region eu-north-1
-├── variables.tf              # cluster name/version, CIDRs, instance type, tags
-├── vpc.tf                     # VPC module (subnets, NAT gateway, AZ discovery)
-├── main.tf                    # EKS cluster + managed node group
-├── ebs-csi.tf                 # EBS CSI driver IRSA role + EKS addon
-├── lb-controller-irsa.tf      # Load Balancer Controller IRSA role + IAM policy
-├── iam_policy.json            # official AWS-published IAM policy for the LB controller
-└── outputs.tf                 # cluster endpoint, name, security group id
+<img width="717" height="489" alt="image" src="https://github.com/user-attachments/assets/cb57f264-e9d3-4c51-9a7f-fc46d62281f4" />
 
-EKS-terraform-K8s/
-├── namespace.yml
-├── 01-secrets-and-config.yaml # Postgres credentials + init-script ConfigMap
-├── 02-serviceaccounts.yaml    # frontend + backend ServiceAccounts (backend has IRSA annotation)
-├── 03-postgres-statefulset.yaml
-├── 04-backend.yaml             # backend Deployment, Service, HPA
-├── 05-frontend.yaml      # frontend Deployment, Service, HPA
-├── 06-ingress.yaml            # ALB Ingress routing to frontend-service
-├── 07-network-policies.yaml   # default-deny baseline + explicit allow rules
-├── 01_schema.sql
-└── 02_seed.sql
-```
 ---
 
 ## Prerequisites
