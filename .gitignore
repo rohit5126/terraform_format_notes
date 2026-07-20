@@ -3,6 +3,8 @@
 .terraform.lock.hcl
 */kubectl
 */kubectl.sha256
-*/terraform.tfstate*
+terraform.tfstate*
 terra-key
 terra-key.pub
+terraform.tfstate
+terraform.tfstate.backup
