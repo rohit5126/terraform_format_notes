@@ -17,14 +17,13 @@ module "eks" {
             min_size = 1
             max_size = 4
             desired_size = 2
-            ami_id = "ami-0aba19e56f3eaec05"
 
             instance_types = [var.instance_types]
-            Terraform = "true"
+            
 
         }
     }
 
-    tags = var.tags
-  
+    tags = var.tags 
+    
 }

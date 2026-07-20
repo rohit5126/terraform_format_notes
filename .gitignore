@@ -1,3 +1,8 @@
 .terraform
 */.terraform
-.terraform*
+.terraform.lock.hcl
+*/kubectl
+*/kubectl.sha256
+*/terraform.tfstate*
+terra-key
+terra-key.pub

@@ -39,5 +39,5 @@ variable "tags" {
 }
 
 variable "instance_types" {
-    default = "t3.micro"
+    default = "c7i-flex.large"
 }
