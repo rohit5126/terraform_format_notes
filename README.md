@@ -26,6 +26,7 @@ DevBoard is a task-tracking app (Go API + React/Vite frontend + Postgres) deploy
 
   <img width="718" height="409" alt="Screenshot From 2026-07-20 13-29-24" src="https://github.com/user-attachments/assets/0789294b-efa0-42c0-86f5-434d83adb760" />
 
+---
 
 ## Repository layout
 
@@ -53,6 +54,7 @@ EKS-terraform-K8s/
 ├── 01_schema.sql
 └── 02_seed.sql
 ```
+---
 
 ## Prerequisites
 
@@ -61,6 +63,8 @@ EKS-terraform-K8s/
 - `kubectl`
 - `helm` (for the Load Balancer Controller install)
 - Docker (only needed if you rebuild the app images)
+
+---
 
 ## Setup — from scratch
 
@@ -147,6 +151,8 @@ kubectl get ingress -n devboard-app
 
 The `ADDRESS` column shows the ALB hostname once the controller finishes provisioning it (usually a couple of minutes). Open it in a browser over `http://` — no TLS listener is configured yet.
 
+--- 
+
 ## IAM & add-ons
 
 Both cluster add-ons use **IRSA**: a Kubernetes ServiceAccount assumes a scoped IAM role via the cluster's OIDC provider, so pods get exactly the AWS permissions they need without static credentials.
@@ -160,6 +166,8 @@ Both cluster add-ons use **IRSA**: a Kubernetes ServiceAccount assumes a scoped 
 | Symptom if broken | PVC stuck `Pending` forever | Ingress has no `ADDRESS`, or ALB returns 503/504 |
 
 This is a **one-time, per-cluster** setup — every additional `Ingress` or `PersistentVolumeClaim` created afterward reuses the same controllers automatically. A new cluster needs this bootstrap repeated once.
+
+---
 
 ## Known issues / things to double-check
 
