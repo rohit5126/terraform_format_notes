@@ -26,8 +26,13 @@ spec:
     - Egress
   ingress:
     - from:
-        - namespaceSelector: {}     # ALB targets pods directly via the VPC CNI;
-          podSelector: {}           # tighten this to your ingress-controller namespace/labels if used
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: envoy-gateway-system
+          podSelector:
+            matchLabels:
+              gateway.envoyproxy.io/owning-gateway-namespace: devboard-app
+              gateway.envoyproxy.io/owning-gateway-name: devboard-gateway          # tighten this to your ingress-controller namespace/labels if used
       ports:
         - port: 4173
   egress:
