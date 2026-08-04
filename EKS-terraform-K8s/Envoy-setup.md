@@ -29,7 +29,7 @@ Installed via Helm into its own namespace, after first installing the upstream G
 ```
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
 
-helm install eg oci://docker.io/envoyproxy/gateway-helm \  --version v1.1.2 \  -n envoy-gateway-system \  --create-namespace
+helm install eg oci://docker.io/envoyproxy/gateway-helm --version v1.1.2 -n envoy-gateway-system --create-namespace
 
 #Envoy Gateway runs its own controller pod (envoy-gateway-system) that watches Gateway/HTTPRoute objects and manages the Envoy proxy data-plane pods that actually terminate and route traffic — the same conceptual role the AWS Load Balancer Controller played for ALB/Ingress, but implemented as proxy pods inside the cluster rather than an external AWS-managed ALB.
 
