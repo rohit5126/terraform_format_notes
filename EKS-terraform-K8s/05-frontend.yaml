@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: frontend-deployment
   namespace: devboard-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
   labels:
     apps: frontend
     tier: web
@@ -42,6 +44,8 @@ kind: Service
 metadata:
   name: frontend-service
   namespace: devboard-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
   labels:
     apps: frontend
 spec:
@@ -57,6 +61,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: frontend-hpa
   namespace: devboard-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

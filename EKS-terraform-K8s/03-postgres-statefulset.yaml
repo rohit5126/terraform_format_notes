@@ -6,6 +6,8 @@ kind: Service
 metadata:
   name: postgres
   namespace: devboard-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   clusterIP: None          # headless - StatefulSet pods get stable DNS names
   selector:

@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: backend-deployment
   namespace: devboard-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  argocd.argoproj.io/sync-wave: "1"
   labels:
     apps: backend
     tier: app
@@ -67,6 +70,8 @@ kind: Service
 metadata:
   name: backend
   namespace: devboard-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
   labels:
     apps: backend
 spec:
@@ -82,6 +87,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: backend-hpa
   namespace: devboard-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
