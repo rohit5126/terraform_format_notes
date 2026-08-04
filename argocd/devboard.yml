@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: devboard
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/rohit5126/terraform_format_notes.git
+    targetRevision: main
+    path: EKS-terraform-K8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: devboard-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,17 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: devboard
+  name: bankapp
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/rohit5126/terraform_format_notes.git
-    targetRevision: main
-    path: EKS-terraform-K8s
+    repoURL: https://github.com/rohit5126/AI-BankApp-DevOps.git
+    targetRevision: actions
+    path: k8s
   destination:
     server: https://kubernetes.default.svc
-    namespace: devboard-app
+    namespace: newbankapp
   syncPolicy:
     automated:
       prune: true
