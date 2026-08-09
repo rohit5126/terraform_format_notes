@@ -24,7 +24,7 @@ variable "pvt-cidr-2" {
 }
 
 variable "cluster-name" {
-    default = "devboard"
+    default = "bankapp"
 }
 
 variable "cluster-version" {
