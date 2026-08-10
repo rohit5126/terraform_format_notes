@@ -12,3 +12,7 @@ output "cluster_security_group_id" {
   
 }
 
+output "grafana-password" {
+    value = random_password.grafana_admin.result
+}
+

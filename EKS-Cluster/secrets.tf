@@ -28,7 +28,7 @@ resource "aws_secretsmanager_secret_version" "duckdns" {
 
 
 resource "random_password" "grafana_admin" {
-  length  = 20
+  length  = 10
   special = false
 }
 
