@@ -29,7 +29,6 @@ resource "aws_iam_role_policy" "external_secrets_read" {
       Resource = [
         aws_secretsmanager_secret.mysql.arn,
         aws_secretsmanager_secret.grafana.arn,
-        aws_secretsmanager_secret.duckdns.arn
         ]
     }]
   })
