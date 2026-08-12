@@ -16,7 +16,7 @@ provider "aws" {
 # ---------------------------------------------------------------------------
 
 
-resource "aws_s3_bucket" "tf-state" {
+resource "aws_s3_bucket" "tf_state" {
     bucket = "diksha-state-bucket-2003"
 
 }
