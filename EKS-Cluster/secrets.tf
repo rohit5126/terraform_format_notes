@@ -17,15 +17,6 @@ resource "aws_secretsmanager_secret_version" "mysql" {
 }
 
 
-resource "aws_secretsmanager_secret" "duckdns" {
-  name = "bankapp/duckdns-token"
-}
-
-resource "aws_secretsmanager_secret_version" "duckdns" {
-  secret_id     = aws_secretsmanager_secret.duckdns.id
-  secret_string = "ecdaa977-9ad9-443f-af09-4397abfbbd3f"
-}
-
 
 resource "random_password" "grafana_admin" {
   length  = 10
