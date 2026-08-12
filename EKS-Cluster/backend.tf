@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "rohit-state-bucket-5126"
+    bucket       = "diksha-state-bucket-2003"
     key          = "terraform.tfstate"
     region       = "eu-north-1"
     encrypt      = true
