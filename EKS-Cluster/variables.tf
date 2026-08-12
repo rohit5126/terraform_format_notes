@@ -38,11 +38,21 @@ variable "cluster-version" {
 
 variable "tags" {
     default = {
-        Name = "devboard"
+        Name = "bankapp"
         Environment = "Dev"
     }
 }
 
 variable "instance_types" {
     default = "c7i-flex.large"
+}
+
+variable "enable_argocd" {
+  type        = bool
+  default     = true
+}
+
+variable "argocd_chart_version" {
+  type        = string
+  default     = "10.3.0"
 }
