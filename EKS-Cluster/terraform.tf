@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.0"
+      version = "~> 5.0"
     }
 
     # helm 3.x uses attribute syntax; kubernetes is pinned to v2, which still uses blocks.
