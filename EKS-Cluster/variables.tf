@@ -3,6 +3,11 @@ variable "vpc-cidr" {
   
 }
 
+variable "region" {
+    default = "eu-north-1"
+
+}
+
 variable "pub-cidr-1" {
     default = "10.0.1.0/24"
   
