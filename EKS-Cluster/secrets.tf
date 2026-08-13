@@ -10,9 +10,12 @@ resource "aws_secretsmanager_secret" "mysql" {
 resource "aws_secretsmanager_secret_version" "mysql" {
   secret_id = aws_secretsmanager_secret.mysql.id
   secret_string = jsonencode({
+    engine   = "mysql"
+    host     = "mysql-state-0.mysql.newbankapp.svc.cluster.local"
+    port     = 3306
     username = "root"
     password = random_password.mysql_password.result
-    database = "bankapp"
+    dbname   = "bankapp"
   })
 }
 
