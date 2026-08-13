@@ -17,6 +17,10 @@ resource "aws_secretsmanager_secret_version" "mysql" {
     password = random_password.mysql_password.result
     dbname   = "bankapp"
   })
+
+  lifecycle {
+    ignore_changes = [secret_string]
+  }
 }
 
 
