@@ -11,7 +11,7 @@ resource "aws_secretsmanager_secret_version" "mysql" {
   secret_id = aws_secretsmanager_secret.mysql.id
   secret_string = jsonencode({
     engine   = "mysql"
-    host     = "mysql-state-0.mysql.newbankapp.svc.cluster.local"
+    host     = "a28643631bb424079ab601e44d734fd8-9a26cb8303cd62eb.elb.eu-north-1.amazonaws.com"
     port     = 3306
     username = "root"
     password = random_password.mysql_password.result
