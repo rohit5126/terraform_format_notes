@@ -22,3 +22,8 @@ output "argocd_initial_password" {
   value       = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d"
 }
 
+output "grafana_initial_password" {
+  description = "Read grafana generated admin password"
+  value       = "kubectl get secret grafana-admin-secret -n monitoring -o jsonpath='{.data.admin-password}' | base64 -d"
+}
+
