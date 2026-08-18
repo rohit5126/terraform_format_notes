@@ -1,4 +1,4 @@
-# Uses the OIDC provider you already created for IRSA in terraform/iam-oidc.tf
+
 data "http" "lb_controller_iam_policy" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json"
 }
@@ -8,21 +8,32 @@ resource "aws_iam_policy" "lb_controller" {
   policy = data.http.lb_controller_iam_policy.response_body
 }
 
+data "aws_iam_policy_document" "lb_controller_assume" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    principals {
+      type        = "Federated"
+      identifiers = [module.eks.oidc_provider_arn]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "${module.eks.oidc_provider}:sub"
+      values   = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "${module.eks.oidc_provider}:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+  }
+}
+
 resource "aws_iam_role" "lb_controller" {
-  name = "eks-aws-load-balancer-controller"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = { Federated = aws_iam_openid_connect_provider.eks.arn } # match your existing OIDC resource name
-      Action = "sts:AssumeRoleWithWebIdentity"
-      Condition = {
-        StringEquals = {
-          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
-        }
-      }
-    }]
-  })
+  name               = "eks-aws-load-balancer-controller"
+  assume_role_policy = data.aws_iam_policy_document.lb_controller_assume.json
 }
 
 resource "aws_iam_role_policy_attachment" "lb_controller" {
